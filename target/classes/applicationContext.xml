@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+	<bean id="messageDestination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="messageQueue1" />
+	</bean>
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="receiveTimeout" value="10000" />
+	</bean>
+
+	<bean id="springJmsProducer" class="com.javacodegeeks.spring.jms.SpringJmsProducer">
+		<property name="destination" ref="messageDestination" />
+		<property name="jmsTemplate" ref="jmsTemplate" />
+	</bean>
+	
+	<bean id="springJmsConsumer" class="com.javacodegeeks.spring.jms.SpringJmsConsumer">
+		<property name="destination" ref="messageDestination" />
+		<property name="jmsTemplate" ref="jmsTemplate" />
+	</bean>
+	
+    <bean id="jmsTemplateWithDefaultDestination" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="receiveTimeout" value="10000" />
+		<property name="defaultDestinationName" value="messageQueue2" />
+	</bean>
+	
+    <bean id="springJmsGatewayProducer" class="com.javacodegeeks.spring.jms.SpringJmsGatewayProducer">
+		<property name="jmsTemplate" ref="jmsTemplateWithDefaultDestination" />
+	</bean>
+	
+	<bean id="springJmsGatewayConsumer" class="com.javacodegeeks.spring.jms.SpringJmsGatewayConsumer">
+		<property name="jmsTemplate" ref="jmsTemplateWithDefaultDestination" />
+	</bean>
+	
+	<bean id="springJmsPersonProducer" class="com.javacodegeeks.spring.jms.SpringJmsPersonProducer">
+		<property name="jmsTemplate" ref="jmsTemplateWithDefaultDestination" />
+	</bean>
+	
+	<bean id="springJmsPersonConsumer" class="com.javacodegeeks.spring.jms.SpringJmsPersonConsumer">
+		<property name="jmsTemplate" ref="jmsTemplateWithDefaultDestination" />
+	</bean>
+	
+	<bean id="jmsTemplateWithMsgConverter" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="receiveTimeout" value="10000" />
+		<property name="defaultDestinationName" value="messageQueue2" />
+		<property name="messageConverter" ref="personMessageConverter" />
+	</bean>
+	
+	<bean id="personMessageConverter" class="com.javacodegeeks.spring.jms.PersonMessageConverter" />
+
+</beans>
