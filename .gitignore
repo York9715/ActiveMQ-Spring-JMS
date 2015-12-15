@@ -2,5 +2,4 @@ bin/
 /target
 /local
 
-!.gitignore
 /*.class
